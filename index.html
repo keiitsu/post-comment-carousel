@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>54jingyi｜貼文圖文並茂但沒人留言 輪播貼文</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#EDEAE3;
+    --olive:#3D4F2A;
+    --olive-deep:#2E3D1F;
+    --ink:#1F2418;
+    --gold:#C9A961;
+    --serif:'Noto Serif TC', serif;
+    --sans:'Noto Sans TC', sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:var(--sans);
+    background:#D9D5CC;
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:32px 16px;color:var(--ink);
+  }
+
+  .ig-frame{
+    width:440px;background:#fff;border-radius:18px;
+    box-shadow:0 18px 50px rgba(0,0,0,.18);
+    overflow:hidden;border:1px solid #e6e2d8;
+  }
+  .ig-header{
+    display:flex;align-items:center;gap:10px;
+    padding:12px 14px;border-bottom:1px solid #efece4;
+  }
+  .ig-avatar-small{
+    width:34px;height:34px;border-radius:50%;
+    background:#cdd0c2 url('./assets/case-3.jpg.png') center/cover;
+    border:1px solid #e6e2d8;
+  }
+  .ig-meta{display:flex;flex-direction:column;line-height:1.2;}
+  .ig-meta .name{font-weight:600;font-size:13px;}
+  .ig-meta .sub{font-size:11px;color:#888;}
+  .ig-dots{margin-left:auto;color:#666;font-size:18px;letter-spacing:2px;}
+
+  .carousel{
+    position:relative;width:400px;height:500px;
+    margin:10px auto;overflow:hidden;border-radius:8px;
+    user-select:none;
+  }
+  .track{
+    display:flex;width:100%;height:100%;
+    transition:transform .45s cubic-bezier(.22,.7,.25,1);
+    will-change:transform;
+  }
+  .slide{
+    flex:0 0 100%;width:400px;height:500px;
+    position:relative;padding:24px 30px 60px;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+  }
+  .slide.bg-cream{background:var(--cream);color:var(--ink);}
+  .slide.bg-olive{background:var(--olive);color:var(--cream);}
+
+  .topbar{
+    display:flex;align-items:center;gap:8px;
+    margin-bottom:6px;
+  }
+  .topbar .avatar{
+    width:26px;height:26px;border-radius:50%;
+    background:#cdd0c2 url('./assets/case-3.jpg.png') center/cover;
+    border:1.5px solid currentColor;
+    flex-shrink:0;
+  }
+  .topbar .handle{
+    font-family:var(--sans);font-weight:500;
+    font-size:13px;letter-spacing:.5px;
+    opacity:.95;
+  }
+
+  .pagenum{
+    position:absolute;top:30px;right:30px;
+    font-family:var(--serif);font-size:13px;
+    letter-spacing:1px;opacity:.65;
+  }
+
+  .body{
+    flex:1;display:flex;flex-direction:column;
+    justify-content:flex-start;margin-top:18px;
+  }
+  .h1{
+    font-family:var(--serif);font-weight:700;
+    font-size:22px;line-height:1.55;letter-spacing:.5px;
+    margin-bottom:18px;
+  }
+
+  .hl{
+    background:var(--ink);color:var(--cream);
+    padding:1px 8px 3px;border-radius:2px;
+    font-family:var(--serif);font-weight:700;
+    display:inline-block;line-height:1.4;
+  }
+  .bg-olive .hl{background:var(--cream);color:var(--olive-deep);}
+
+  .p{
+    font-family:var(--serif);
+    font-size:14px;line-height:1.85;letter-spacing:.3px;
+    margin-bottom:13px;opacity:.92;
+  }
+
+  /* 引言 */
+  .quote{
+    margin-top:auto;margin-bottom:6px;
+    padding-left:12px;
+    border-left:2px solid currentColor;
+    font-family:var(--serif);font-weight:700;
+    font-size:15px;line-height:1.7;
+    letter-spacing:.5px;
+  }
+
+  /* === 封面 === */
+  .cover-eyebrow{
+    font-family:var(--sans);font-size:12px;
+    letter-spacing:3px;opacity:.55;
+    margin-top:6px;margin-bottom:24px;
+  }
+  .cover-h{
+    font-family:var(--serif);font-weight:700;
+    font-size:34px;line-height:1.5;letter-spacing:.5px;
+    margin-bottom:auto;
+  }
+  .cover-h .light{font-weight:400;opacity:.55;}
+  .cover-sub{
+    font-family:var(--serif);
+    font-size:14px;line-height:1.95;
+    margin-top:auto;margin-bottom:14px;opacity:.65;
+  }
+  .cover-foot{
+    font-family:var(--serif);
+    font-size:12px;letter-spacing:5px;
+    opacity:.5;
+  }
+
+  /* === 編號清單 === */
+  .numlist{display:flex;flex-direction:column;gap:0;margin-bottom:auto;}
+  .numlist .row{
+    display:flex;gap:18px;align-items:flex-start;
+    padding:14px 0;
+  }
+  .numlist .row + .row{
+    border-top:1px solid currentColor;
+    border-color:rgba(255,255,255,.15);
+  }
+  .bg-cream .numlist .row + .row{border-color:rgba(31,36,24,.15);}
+  .numlist .num{
+    font-family:'Courier New',monospace;
+    font-size:13px;letter-spacing:1px;
+    opacity:.5;flex-shrink:0;padding-top:3px;width:22px;
+  }
+  .numlist .row-content{
+    font-family:var(--serif);font-size:14px;line-height:1.8;
+  }
+  .numlist .row-title{font-weight:700;}
+  .numlist .row-desc{opacity:.85;}
+
+  /* === X / ✓ 對照卡 === */
+  .compare-stack{
+    display:flex;flex-direction:column;gap:12px;
+    margin-bottom:auto;
+  }
+  .cmp{
+    border-radius:8px;padding:14px 16px 14px 14px;
+    background:rgba(0,0,0,.18);
+    display:flex;gap:12px;align-items:flex-start;
+  }
+  .bg-cream .cmp{background:rgba(0,0,0,.05);}
+  .cmp .icon{
+    font-family:var(--serif);font-size:18px;
+    width:18px;flex-shrink:0;opacity:.6;line-height:1.4;
+  }
+  .cmp .content{flex:1;}
+  .cmp .label{
+    font-family:var(--sans);font-size:11px;letter-spacing:2px;
+    opacity:.55;margin-bottom:6px;
+  }
+  .cmp .text{
+    font-family:var(--serif);font-size:13.5px;line-height:1.85;
+  }
+  .cmp .note{font-size:12.5px;opacity:.7;margin-top:6px;}
+
+  /* === BEFORE / AFTER 大數字卡 === */
+  .num-compare{
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;
+    margin-bottom:14px;
+  }
+  .num-card{
+    border-radius:8px;padding:18px 18px;
+    background:rgba(0,0,0,.18);min-height:170px;
+    display:flex;flex-direction:column;
+  }
+  .bg-cream .num-card{background:rgba(0,0,0,.05);}
+  .num-eyebrow{
+    font-family:var(--sans);font-size:11px;letter-spacing:2px;
+    opacity:.55;margin-bottom:14px;
+  }
+  .num-big{
+    font-family:var(--serif);font-weight:700;
+    font-size:54px;line-height:1;margin-bottom:14px;
+  }
+  .num-after .num-big{color:#E2C97A;}
+  .bg-cream .num-after .num-big{color:var(--olive);}
+  .num-desc{
+    font-family:var(--serif);font-size:12.5px;line-height:1.7;
+    opacity:.85;
+  }
+
+  /* === CTA === */
+  .cta-eyebrow{
+    font-family:var(--sans);font-size:12px;
+    letter-spacing:5px;opacity:.55;
+    text-align:center;margin-bottom:24px;
+  }
+  .cta-mid{
+    font-family:var(--serif);font-weight:700;
+    font-size:24px;letter-spacing:1px;
+    text-align:center;margin-bottom:8px;
+    line-height:1.55;
+  }
+  .cta-mid .accent{color:var(--gold);}
+  .bg-cream .cta-mid .accent{color:var(--olive);}
+  .cta-line{
+    width:32px;height:1px;background:currentColor;
+    opacity:.4;margin:18px auto 18px;
+  }
+  .cta-action-top{
+    font-family:var(--serif);font-weight:600;
+    font-size:18px;letter-spacing:1px;
+    text-align:center;margin-bottom:14px;
+  }
+  .cta-keyword{
+    text-align:center;margin-bottom:18px;
+  }
+  .cta-keyword .hl{
+    font-size:30px;padding:6px 28px 8px;letter-spacing:8px;
+  }
+  .cta-action-bottom{
+    font-family:var(--serif);
+    font-size:14px;line-height:1.85;letter-spacing:1px;
+    text-align:center;margin-bottom:auto;opacity:.7;
+  }
+  .cta-tags{
+    margin-top:18px;text-align:center;
+    font-family:var(--sans);font-size:11px;letter-spacing:.5px;
+    opacity:.5;
+  }
+
+  /* 滑動箭頭 */
+  .arrow{
+    position:absolute;right:14px;top:50%;
+    transform:translateY(-50%);
+    width:32px;height:32px;border-radius:50%;
+    background:rgba(255,255,255,.6);color:var(--olive);
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;backdrop-filter:blur(4px);
+    animation:nudge 1.6s ease-in-out infinite;z-index:3;
+  }
+  .bg-olive .arrow{background:rgba(237,234,227,.18);color:var(--cream);}
+  @keyframes nudge{
+    0%,100%{transform:translateY(-50%) translateX(0);}
+    50%{transform:translateY(-50%) translateX(5px);}
+  }
+
+  .footer{
+    position:absolute;left:30px;right:30px;bottom:18px;
+    display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--sans);font-size:11px;letter-spacing:3px;
+    opacity:.7;
+  }
+  .progress{
+    flex:1;margin:0 14px;height:2px;background:currentColor;
+    opacity:.25;border-radius:2px;position:relative;overflow:hidden;
+  }
+  .progress::after{
+    content:'';position:absolute;left:0;top:0;height:100%;
+    background:currentColor;opacity:1;
+    width:var(--p,14%);transition:width .45s ease;
+  }
+
+  .controls{display:flex;justify-content:center;gap:10px;padding:10px 14px 14px;}
+  .controls button{
+    border:1px solid #d6d2c6;background:#fff;
+    padding:6px 14px;border-radius:999px;
+    font-family:var(--sans);font-size:12px;
+    cursor:pointer;color:#333;transition:all .2s;
+  }
+  .controls button:hover{background:var(--olive);color:#fff;border-color:var(--olive);}
+  .dots{display:flex;align-items:center;gap:6px;margin:0 8px;}
+  .dots span{width:6px;height:6px;border-radius:50%;background:#cfcabc;transition:all .2s;}
+  .dots span.active{background:var(--olive);width:18px;border-radius:3px;}
+
+  .ig-actions{display:flex;gap:14px;padding:10px 14px 6px;font-size:18px;color:#333;}
+  .ig-actions .right{margin-left:auto;}
+  .ig-caption{padding:0 14px 14px;font-size:12px;color:#555;line-height:1.6;}
+  .ig-caption b{color:#222;}
+
+  @media(max-width:480px){
+    .ig-frame{width:100%;max-width:400px;}
+    .carousel{width:100%;max-width:400px;}
+    .slide{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="ig-frame">
+  <div class="ig-header">
+    <div class="ig-avatar-small"></div>
+    <div class="ig-meta">
+      <span class="name">54jingyi</span>
+      <span class="sub">底氣實驗室 · 原創內容</span>
+    </div>
+    <div class="ig-dots">···</div>
+  </div>
+
+  <div class="carousel" id="carousel">
+    <div class="track" id="track">
+
+      <!-- 1. 封面 -->
+      <section class="slide bg-olive">
+        <div class="topbar">
+          <div class="avatar"></div>
+          <div class="handle">@54jingyi</div>
+        </div>
+        <div class="body" style="margin-top:8px;">
+          <div class="cover-eyebrow">個人品牌　·　NO.15</div>
+          <h1 class="cover-h">你的貼文<br>圖文並茂，<br><span class="light">但沒人留言</span></h1>
+          <div class="cover-sub">
+            收藏數漂亮，留言欄卻一片死寂。<br>
+            問題不是內容不夠好——<br>
+            是你沒給人開口的理由。
+          </div>
+          <div class="cover-foot">底氣實驗室</div>
+        </div>
+        <div class="arrow">›</div>
+        <div class="footer">
+          <span>SHARE</span>
+          <div class="progress" style="--p:14%;"></div>
+          <span>SAVE</span>
+        </div>
+      </section>
+
+      <!-- 2. 收藏 vs 留言根本是兩件事 -->
+      <section class="slide bg-cream">
+        <div class="topbar">
+          <div class="avatar"></div>
+          <div class="handle">@54jingyi</div>
+        </div>
+        <div class="pagenum">02 / 07</div>
+        <div class="body">
+          <h2 class="h1">收藏 vs 留言<br>根本是兩件事</h2>
+          <p class="p">收藏是「我晚點用」——<br>不需要你，只需要資訊。</p>
+          <p class="p">留言是「我有感覺」——<br>被觸動、被挑釁、或有話要說。</p>
+          <p class="p">你的貼文如果只輸出乾貨，<br>人們會存走，但不會回頭。</p>
+          <div class="quote">留言需要的不是乾貨，<br>是一個觸發點</div>
+        </div>
+        <div class="arrow">›</div>
+        <div class="footer">
+          <span>SHARE</span>
+          <div class="progress" style="--p:28%;"></div>
+          <span>SAVE</span>
+        </div>
+      </section>
+
+      <!-- 3. 三種能引發留言的貼文結構 -->
+      <section class="slide bg-olive">
+        <div class="topbar">
+          <div class="avatar"></div>
+          <div class="handle">@54jingyi</div>
+        </div>
+        <div class="pagenum">03 / 07</div>
+        <div class="body">
+          <h2 class="h1">三種能引發留言<br>的貼文結構</h2>
+          <div class="numlist">
+            <div class="row">
+              <div class="num">01</div>
+              <div class="row-content">
+                <span class="row-title">立場型</span>——說一個有人會不同意的觀點。<br>
+                <span class="row-desc">爭議感讓人忍不住回應。</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="num">02</div>
+              <div class="row-content">
+                <span class="row-title">提問型</span>——最後一句是一個真實的問題。<br>
+                <span class="row-desc">問到他的生活，他就會說話。</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="num">03</div>
+              <div class="row-content">
+                <span class="row-title">代入型</span>——「你是不是也這樣？」<br>
+                <span class="row-desc">被說中的人，沉默不了。</span>
+              </div>
+            </div>
+          </div>
+          <div class="quote">選一種結構，<br>比寫十條乾貨更有用</div>
+        </div>
+        <div class="arrow">›</div>
+        <div class="footer">
+          <span>SHARE</span>
+          <div class="progress" style="--p:42%;"></div>
+          <span>SAVE</span>
+        </div>
+      </section>
+
+      <!-- 4. 這樣寫 vs 那樣寫 -->
+      <section class="slide bg-cream">
+        <div class="topbar">
+          <div class="avatar"></div>
+          <div class="handle">@54jingyi</div>
+        </div>
+        <div class="pagenum">04 / 07</div>
+        <div class="body">
+          <h2 class="h1">這樣寫 vs 那樣寫<br>差距一眼就看出</h2>
+          <div class="compare-stack">
+            <div class="cmp">
+              <div class="icon">✕</div>
+              <div class="content">
+                <div class="label">錯誤示範</div>
+                <div class="text">「早起的三個好處：精神好、效率高、情緒穩定。」</div>
+                <div class="note">——資訊完整，但跟你無關。</div>
+              </div>
+            </div>
+            <div class="cmp">
+              <div class="icon">✓</div>
+              <div class="content">
+                <div class="label">正確示範</div>
+                <div class="text">「我逼自己早起三個月，才發現原來我不是不自律——我只是睡前刷太多短影音。你呢？」</div>
+                <div class="note">——說到他，他就開口。</div>
+              </div>
+            </div>
+          </div>
+          <div class="quote">乾貨教人，故事留人，<br>問句讓人說話</div>
+        </div>
+        <div class="arrow">›</div>
+        <div class="footer">
+          <span>SHARE</span>
+          <div class="progress" style="--p:57%;"></div>
+          <span>SAVE</span>
+        </div>
+      </section>
+
+      <!-- 5. 下一篇貼文，這樣套用 -->
+      <section class="slide bg-olive">
+        <div class="topbar">
+          <div class="avatar"></div>
+          <div class="handle">@54jingyi</div>
+        </div>
+        <div class="pagenum">05 / 07</div>
+        <div class="body">
+          <h2 class="h1">下一篇貼文，<br>這樣套用</h2>
+          <div class="numlist">
+            <div class="row">
+              <div class="num">01</div>
+              <div class="row-content">
+                先寫你原本要說的乾貨，<br>
+                <span class="row-title">不要刪，只是先放著。</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="num">02</div>
+              <div class="row-content">
+                在結尾加一句「你是不是也……」<br>
+                或「你怎麼看？」——<span class="row-title">只需要一句。</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="num">03</div>
+              <div class="row-content">
+                或者，把第一句改成<br>
+                <span class="row-title">一個大多數人不同意的觀點。</span><br>
+                <span class="row-desc">反射性留言就會來。</span>
+              </div>
+            </div>
+          </div>
+          <div class="quote">不用重寫，只要加一個<br>讓人有話說的出口</div>
+        </div>
+        <div class="arrow">›</div>
+        <div class="footer">
+          <span>SHARE</span>
+          <div class="progress" style="--p:71%;"></div>
+          <span>SAVE</span>
+        </div>
+      </section>
+
+      <!-- 6. 同一帳號，改了結構後的差距 -->
+      <section class="slide bg-cream">
+        <div class="topbar">
+          <div class="avatar"></div>
+          <div class="handle">@54jingyi</div>
+        </div>
+        <div class="pagenum">06 / 07</div>
+        <div class="body">
+          <h2 class="h1">同一帳號，<br>改了結構後的差距</h2>
+          <div class="num-compare">
+            <div class="num-card num-before">
+              <div class="num-eyebrow">改前</div>
+              <div class="num-big">3</div>
+              <div class="num-desc">平均留言數<br>全是乾貨型貼文</div>
+            </div>
+            <div class="num-card num-after">
+              <div class="num-eyebrow">改後</div>
+              <div class="num-big">47</div>
+              <div class="num-desc">平均留言數<br>加入觸發點結構</div>
+            </div>
+          </div>
+          <p class="p">內容幾乎沒變，字數也沒變多。<br>只是在最後加了一句真實的問題——<br>結果差了十五倍。</p>
+          <div class="quote">演算法喜歡留言，<br>但留言喜歡被觸動的人</div>
+        </div>
+        <div class="arrow">›</div>
+        <div class="footer">
+          <span>SHARE</span>
+          <div class="progress" style="--p:85%;"></div>
+          <span>SAVE</span>
+        </div>
+      </section>
+
+      <!-- 7. CTA -->
+      <section class="slide bg-olive">
+        <div class="topbar">
+          <div class="avatar"></div>
+          <div class="handle">@54jingyi</div>
+        </div>
+        <div class="body" style="margin-top:30px;">
+          <div class="cta-eyebrow">底氣實驗室　·　行動時間</div>
+          <div class="cta-mid">想要你的貼文<br>不只被收藏</div>
+          <div class="cta-mid"><span class="accent">——還被留言爆滿</span></div>
+          <div class="cta-line"></div>
+          <div class="cta-action-top">現在留言</div>
+          <div class="cta-keyword"><span class="hl">底氣</span></div>
+          <div class="cta-action-bottom">
+            我把完整的留言爆發公式<br>
+            直接傳給你
+          </div>
+          <div class="cta-tags">
+            #個人品牌　#IG經營　#留言技巧　#底氣實驗室　#54jingyi
+          </div>
+        </div>
+        <div class="footer">
+          <span>SHARE</span>
+          <div class="progress" style="--p:100%;"></div>
+          <span>SAVE</span>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="ig-actions">
+    <span>♡</span><span>💬</span><span>📤</span>
+    <span class="right">🔖</span>
+  </div>
+  <div class="ig-caption">
+    <b>54jingyi</b>　貼文圖文並茂，但沒人留言？<br>
+    答案不是寫更多乾貨，是給人一個開口的理由。<br>
+    留言「底氣」拿留言爆發公式 →
+  </div>
+
+  <div class="controls">
+    <button id="prev">← 上一張</button>
+    <div class="dots" id="dots"></div>
+    <button id="next">下一張 →</button>
+  </div>
+</div>
+
+<script>
+  const track = document.getElementById('track');
+  const slides = track.querySelectorAll('.slide');
+  const total = slides.length;
+  const dotsWrap = document.getElementById('dots');
+  let idx = 0;
+
+  for(let i=0;i<total;i++){
+    const d=document.createElement('span');
+    if(i===0)d.classList.add('active');
+    d.addEventListener('click',()=>go(i));
+    dotsWrap.appendChild(d);
+  }
+  const dots = dotsWrap.querySelectorAll('span');
+
+  function go(i){
+    idx = Math.max(0, Math.min(total-1, i));
+    track.style.transform = `translateX(-${idx*100}%)`;
+    dots.forEach((d,j)=>d.classList.toggle('active',j===idx));
+  }
+
+  document.getElementById('prev').addEventListener('click',()=>go(idx-1));
+  document.getElementById('next').addEventListener('click',()=>go(idx+1));
+
+  document.addEventListener('keydown',(e)=>{
+    if(e.key==='ArrowLeft')go(idx-1);
+    if(e.key==='ArrowRight')go(idx+1);
+  });
+
+  let startX=0, dx=0, dragging=false;
+  const carousel=document.getElementById('carousel');
+  const onStart=(x)=>{startX=x;dragging=true;dx=0;};
+  const onMove=(x)=>{if(dragging)dx=x-startX;};
+  const onEnd=()=>{
+    if(!dragging)return;
+    if(Math.abs(dx)>50){ dx<0?go(idx+1):go(idx-1); }
+    dragging=false;dx=0;
+  };
+  carousel.addEventListener('mousedown',e=>onStart(e.clientX));
+  carousel.addEventListener('mousemove',e=>onMove(e.clientX));
+  carousel.addEventListener('mouseup',onEnd);
+  carousel.addEventListener('mouseleave',onEnd);
+  carousel.addEventListener('touchstart',e=>onStart(e.touches[0].clientX),{passive:true});
+  carousel.addEventListener('touchmove',e=>onMove(e.touches[0].clientX),{passive:true});
+  carousel.addEventListener('touchend',onEnd);
+</script>
+</body>
+</html>
